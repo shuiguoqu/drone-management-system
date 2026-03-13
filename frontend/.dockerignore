@@ -1,0 +1,38 @@
+# Dependencies (reinstalled in container)
+node_modules/
+
+# Build outputs (rebuilt in container)
+dist/
+
+# IDE
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Testing
+coverage/
+__tests__/
+*.test.js
+*.spec.js
+
+# Temporary
+tmp/
+temp/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md

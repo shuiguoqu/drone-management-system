@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Drone {
+  id              Int      @id @default(autoincrement())
+  droneCode       String   @unique @db.VarChar(50)
+  name            String   @db.VarChar(100)
+  model           String   @db.VarChar(100)
+  status          String   @db.VarChar(20)
+  batteryLevel    Int      @default(100)
+  lastHeartbeatAt DateTime?
+  remark          String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([droneCode])
+  @@map("drones")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique @db.VarChar(50)
+  password  String   @db.VarChar(255)
+  role      String   @default("operator") @db.VarChar(20)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}

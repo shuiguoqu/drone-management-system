@@ -1,0 +1,68 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: drone-db
+    environment:
+      POSTGRES_USER: drone_user
+      POSTGRES_PASSWORD: drone_pass
+      POSTGRES_DB: drone_management
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U drone_user -d drone_management"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - drone-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: drone-backend
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://drone_user:drone_pass@db:5432/drone_management
+      JWT_SECRET: drone-management-secret-key-2024
+      MQTT_BROKER_URL: mqtt://mqtt-broker:1883
+      PORT: 8000
+    ports:
+      - "8001:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - drone-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: drone-frontend
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
+    networks:
+      - drone-network
+    restart: unless-stopped
+
+  mqtt-broker:
+    image: eclipse-mosquitto:2
+    container_name: drone-mqtt
+    volumes:
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    networks:
+      - drone-network
+
+volumes:
+  postgres_data:
+
+networks:
+  drone-network:
+    driver: bridge

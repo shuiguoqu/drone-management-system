@@ -1,0 +1,6 @@
+node_modules
+.env
+.DS_Store
+*.log
+dist
+# Note: prisma/migrations MUST be version controlled for reproducible deployments

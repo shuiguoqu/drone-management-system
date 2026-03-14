@@ -28,24 +28,58 @@
       </div>
     </a-layout-header>
     
-    <a-layout-content class="content">
-      <router-view />
-    </a-layout-content>
+    <a-layout class="main-layout">
+      <a-layout-sider class="sider" width="220">
+        <a-menu
+          v-model:selectedKeys="selectedKeys"
+          mode="inline"
+          class="main-menu"
+        >
+          <a-menu-item key="drone-list" @click="goToDroneList">
+            <span>无人机管理</span>
+          </a-menu-item>
+          <a-menu-item key="flight-record" @click="goToFlightRecord">
+            <span>飞行记录</span>
+          </a-menu-item>
+        </a-menu>
+      </a-layout-sider>
+      <a-layout-content class="content">
+        <router-view />
+      </a-layout-content>
+    </a-layout>
   </a-layout>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { UserOutlined, DownOutlined, LogoutOutlined } from '@ant-design/icons-vue'
 
 const router = useRouter()
+const route = useRoute()
+const selectedKeys = ref(['drone-list'])
 
 const user = computed(() => {
   const userStr = localStorage.getItem('user')
   return userStr ? JSON.parse(userStr) : null
 })
+
+const goToDroneList = () => {
+  router.push('/')
+}
+
+const goToFlightRecord = () => {
+  router.push('/flight-record')
+}
+
+watch(() => route.path, (newPath) => {
+  if (newPath === '/flight-record') {
+    selectedKeys.value = ['flight-record']
+  } else {
+    selectedKeys.value = ['drone-list']
+  }
+}, { immediate: true })
 
 const handleLogout = () => {
   localStorage.removeItem('token')
@@ -98,10 +132,22 @@ const handleLogout = () => {
   color: #1f2937;
 }
 
+.main-layout {
+  flex: 1;
+}
+
+.sider {
+  background: white;
+  border-right: 1px solid #e8e8e8;
+}
+
+.main-menu {
+  border-right: none;
+  padding-top: 16px;
+}
+
 .content {
-  max-width: 1400px;
-  margin: 0 auto;
+  background: #f0f2f5;
   padding: 24px;
-  width: 100%;
 }
 </style>

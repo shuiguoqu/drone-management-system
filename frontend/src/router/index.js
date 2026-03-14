@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Layout from '../components/Layout.vue'
 import DroneList from '../views/DroneList.vue'
+import FlightRecord from '../views/FlightRecord.vue'
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
         path: '',
         name: 'DroneList',
         component: DroneList
+      },
+      {
+        path: '/flight-record',
+        name: 'FlightRecord',
+        component: FlightRecord
       }
     ]
   }

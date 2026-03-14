@@ -371,28 +371,77 @@ const createDrones = () => {
   })
 }
 
+const updateDroneVisuals = (drone, mesh) => {
+  const color = getDroneColor(drone.status)
+  const body = mesh.children.find(c => c.geometry?.type === 'ConeGeometry')
+  if (body) {
+    body.material.color.setHex(color)
+    body.material.emissive.setHex(color)
+  }
+
+  const altitudeLine = mesh.children.find(c => c.type === 'Line')
+  if (altitudeLine) {
+    altitudeLine.material.color.setHex(color)
+  }
+
+  let glow = mesh.children.find(c => c.geometry?.type === 'SphereGeometry' && c !== body)
+  if (drone.status === 'flying' && !glow) {
+    const glowGeometry = new THREE.SphereGeometry(3, 16, 16)
+    const glowMaterial = new THREE.MeshBasicMaterial({
+      color: color,
+      transparent: true,
+      opacity: 0.2
+    })
+    glow = new THREE.Mesh(glowGeometry, glowMaterial)
+    glow.position.y = 2
+    mesh.add(glow)
+  } else if (drone.status !== 'flying' && glow) {
+    mesh.remove(glow)
+    glow.geometry.dispose()
+    glow.material.dispose()
+  } else if (glow) {
+    glow.material.color.setHex(color)
+  }
+}
+
 const updateDronePositions = () => {
   drones.value.forEach(drone => {
+    if (Math.random() < 0.0005) {
+      const statuses = ['idle', 'flying', 'charging', 'maintenance', 'offline']
+      drone.prevStatus = drone.status
+      drone.status = statuses[Math.floor(Math.random() * statuses.length)]
+      if (drone.status === 'flying' && drone.prevStatus !== 'flying') {
+        drone.altitude = 50 + Math.random() * 150
+        drone.speed = 3 + Math.random() * 10
+      } else if (drone.status !== 'flying') {
+        drone.altitude = 0
+        drone.speed = 0
+      }
+    }
+
     if (drone.status === 'flying') {
-      drone.position.x += (Math.random() - 0.5) * 0.2
-      drone.position.z += (Math.random() - 0.5) * 0.2
-      drone.position.y = 2 + Math.random() * 3
-      
+      drone.position.x += (Math.random() - 0.5) * 0.3
+      drone.position.z += (Math.random() - 0.5) * 0.3
+      drone.position.y = 2 + Math.random() * 4
+
       if (Math.random() < 0.01) {
         drone.batteryLevel = Math.max(0, drone.batteryLevel - 1)
       }
-      
-      const mesh = droneMeshes.get(drone.id)
-      if (mesh) {
+    } else if (drone.status === 'charging') {
+      if (Math.random() < 0.02) {
+        drone.batteryLevel = Math.min(100, drone.batteryLevel + 1)
+      }
+    }
+
+    const mesh = droneMeshes.get(drone.id)
+    if (mesh) {
+      if (drone.status === 'flying') {
         mesh.position.x = drone.position.x
         mesh.position.y = drone.position.y
         mesh.position.z = drone.position.z
-        
-        const blades = mesh.children.filter(c => c.geometry?.type === 'BoxGeometry' && c.geometry.parameters.height === 0.1)
-        blades.forEach(blade => {
-          blade.rotation.y += 0.5
-        })
       }
+
+      updateDroneVisuals(drone, mesh)
     }
   })
 }

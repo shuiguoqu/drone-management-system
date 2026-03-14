@@ -6,8 +6,6 @@ services:
       POSTGRES_USER: drone_user
       POSTGRES_PASSWORD: drone_pass
       POSTGRES_DB: drone_management
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U drone_user -d drone_management"]
       interval: 10s

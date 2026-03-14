@@ -73,14 +73,3 @@ async function main() {
   }
   console.log('示例无人机数据已创建:', drones.length, '条');
 
-  console.log('种子数据完成！');
-}
-
-main()
-  .catch((e) => {
-    console.error('种子数据失败:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });

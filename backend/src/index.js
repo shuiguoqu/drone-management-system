@@ -8,7 +8,6 @@ const { authMiddleware } = require('./middleware/auth');
 const { validate, validateQuery, createDroneSchema, updateDroneSchema, queryDroneSchema } = require('./middleware/validation');
 const authController = require('./controllers/authController');
 const droneController = require('./controllers/droneController');
-const mqttService = require('./services/mqttService');
 
 const app = express();
 const prisma = new PrismaClient();
@@ -58,13 +57,6 @@ app.post('/api/drones', authMiddleware, writeLimiter, validate(createDroneSchema
 app.put('/api/drones/:id', authMiddleware, writeLimiter, validate(updateDroneSchema), droneController.updateDrone);
 app.delete('/api/drones/:id', authMiddleware, writeLimiter, droneController.deleteDrone);
 
-// 错误处理
-app.use((err, req, res, next) => {
-  logger.error('未处理的错误:', err);
-  res.status(500).json({
-    success: false,
-    message: '服务器内部错误',
-    code: 'INTERNAL_ERROR',
   });
 });
 

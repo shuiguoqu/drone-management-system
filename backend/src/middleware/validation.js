@@ -30,30 +30,6 @@ const queryDroneSchema = z.object({
   status: z.enum(droneStatusEnum).optional(),
 });
 
-const validate = (schema) => {
-  return (req, res, next) => {
-    try {
-      const result = schema.parse(req.body);
-      req.validatedData = result;
-      next();
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const errors = error.errors.map(e => ({
-          field: e.path.join('.'),
-          message: e.message,
-        }));
-        return res.status(400).json({
-          success: false,
-          message: '参数校验失败',
-          code: 'VALIDATION_ERROR',
-          errors,
-        });
-      }
-      next(error);
-    }
-  };
-};
-
 const validateQuery = (schema) => {
   return (req, res, next) => {
     try {

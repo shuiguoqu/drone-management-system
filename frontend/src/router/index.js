@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Layout from '../components/Layout.vue'
 import DroneList from '../views/DroneList.vue'
+import FlightRecords from '../views/FlightRecords.vue'
 
 const routes = [
   {
@@ -17,7 +18,14 @@ const routes = [
       {
         path: '',
         name: 'DroneList',
-        component: DroneList
+        component: DroneList,
+        meta: { title: '无人机管理', icon: 'ControlOutlined' }
+      },
+      {
+        path: 'flight-records',
+        name: 'FlightRecords',
+        component: FlightRecords,
+        meta: { title: '飞行记录', icon: 'FileTextOutlined' }
       }
     ]
   }

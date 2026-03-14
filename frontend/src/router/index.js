@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Layout from '../components/Layout.vue'
 import DroneList from '../views/DroneList.vue'
+import DroneMonitor3D from '../views/DroneMonitor3D.vue'
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
         path: '',
         name: 'DroneList',
         component: DroneList
+      },
+      {
+        path: 'monitor3d',
+        name: 'DroneMonitor3D',
+        component: DroneMonitor3D
       }
     ]
   }

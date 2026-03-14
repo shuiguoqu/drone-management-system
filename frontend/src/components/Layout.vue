@@ -28,19 +28,55 @@
       </div>
     </a-layout-header>
     
-    <a-layout-content class="content">
-      <router-view />
-    </a-layout-content>
+    <a-layout class="main-layout">
+      <a-layout-sider class="sider" width="200">
+        <a-menu
+          v-model:selectedKeys="selectedKeys"
+          mode="inline"
+          class="nav-menu"
+        >
+          <a-menu-item key="drones" @click="$router.push('/')">
+            <UnorderedListOutlined />
+            <span>无人机列表</span>
+          </a-menu-item>
+          <a-menu-item key="monitor3d" @click="$router.push('/monitor3d')">
+            <RadarChartOutlined />
+            <span>3D监控中心</span>
+          </a-menu-item>
+        </a-menu>
+      </a-layout-sider>
+      
+      <a-layout-content class="content">
+        <router-view />
+      </a-layout-content>
+    </a-layout>
   </a-layout>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { message } from 'ant-design-vue'
-import { UserOutlined, DownOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+import { 
+  UserOutlined, 
+  DownOutlined, 
+  LogoutOutlined,
+  UnorderedListOutlined,
+  RadarChartOutlined
+} from '@ant-design/icons-vue'
 
 const router = useRouter()
+const route = useRoute()
+
+const selectedKeys = ref(['drones'])
+
+watch(() => route.path, (path) => {
+  if (path === '/monitor3d') {
+    selectedKeys.value = ['monitor3d']
+  } else {
+    selectedKeys.value = ['drones']
+  }
+}, { immediate: true })
 
 const user = computed(() => {
   const userStr = localStorage.getItem('user')
@@ -98,10 +134,42 @@ const handleLogout = () => {
   color: #1f2937;
 }
 
-.content {
+.main-layout {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px;
   width: 100%;
+  background: transparent;
+}
+
+.sider {
+  background: white;
+  margin: 24px 0 24px 24px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-menu {
+  height: 100%;
+  border-radius: 12px;
+  border-right: none;
+}
+
+:deep(.ant-menu-item) {
+  margin: 4px 8px;
+  border-radius: 8px;
+}
+
+:deep(.ant-menu-item-selected) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+:deep(.ant-menu-item-selected .anticon) {
+  color: white;
+}
+
+.content {
+  padding: 24px;
+  min-height: calc(100vh - 64px);
 }
 </style>
